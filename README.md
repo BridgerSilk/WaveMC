@@ -36,26 +36,7 @@ Customize the `config.yml` file to set up your server:
 - World generation options
 
 ## 📜 Plugin Development
-WaveMC supports a **plugin system** that allows server admins to extend functionality using Python scripts.
-
-To create a custom plugin:
-1. Create a folder in the `plugins/` directory.
-2. Add a Python file (e.g., `my_plugin.py`) with the following structure:
-
-```python
-from plugin import Plugin
-
-class MyPlugin(Plugin):
-    def on_load(self):
-        self.logger.info("MyPlugin loaded!")
-
-    def on_player_join(self, player):
-        self.logger.info(f"Welcome, {player.username}!")
-
-plugin = MyPlugin()
-```
-
-3. Restart your server to load your new plugin.
+Plugin system is currently wip!
 
 ## ⚡ Performance
 WaveMC uses a **multi-threaded model** to improve performance over single-threaded servers:
