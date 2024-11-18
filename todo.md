@@ -1,6 +1,5 @@
-- split main.py into seperate files (better abstraction)
 - finish packet map implementation
-- remove comments
-- finish enum implementation for dimension, gamemode, etc (used in client.py)
-
+- fix world creation system (currently empty world, world is being generated in server.py, but also used in client.py for chunks)
 - ! seperate packets from client.py (impl proper re-usable packet system)
+
+- fix entity effect packet

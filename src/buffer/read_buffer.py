@@ -1,4 +1,3 @@
-# reads varint from socket
 def read_varint(sock):
     num = 0
     bytes_read = 0
@@ -15,7 +14,6 @@ def read_varint(sock):
             raise ValueError("VarInt is too large")
     return num
 
-# reads string from socket (varint length-prefixed)
 def read_string(sock):
     length = read_varint(sock)
     if length > 32767:              

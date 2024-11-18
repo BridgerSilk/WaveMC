@@ -1,24 +1,40 @@
-import struct
-import uuid
+from world.world import *
+from world.mc_chunk import *
+from enums.state import *
+from utils.encode_pos import *
 from net.io import *
-from buffer.read_buffer import *
-from buffer.write_buffer import *
-from enums.state import State
 from enums.gamemode import *
+from data.server_options import *
 from enums.dimension import *
 from enums.difficulty import *
-from data.server_options import *
 from enums.leveltype import *
+import struct
+import uuid
+from packets.packetmap import *
+from buffer.read_buffer import *
+from buffer.write_buffer import *
+# packets
+from packets.out.player_pos_and_look import *
+from packets.out.held_item_change import *
+from packets.out.entity_effect import *
+from packets.out.update_health import *
+
+# packets
+player_pos_and_look = PlayerPositionAndLook(SPAWN_X, SPAWN_Y, SPAWN_Z, YAW, PITCH, 0x00) # 0x00 -> flag byte
+
+# test packets
+held_item_change = HeldItemChange(5) # testing
+entity_effect = EntityEffect(1, 0x26, 0x08, 50, False) # fix - doesnt work -> see entity_effect.py
+update_health = UpdateHealth(10, 20, 3) # testing
+
+world = World(Dimension.overworld.value, Difficulty.normal.value, LevelType.default.value)
 
 def handle_client(conn, addr):
-
-    server_out("INFO", f"Client is connecting... (Client: {addr})")
-
     try:
         packet_length = read_varint(conn)
         packet_id = read_varint(conn)
 
-        if packet_id != 0x00:
+        if packet_id != packetmap_server[State.handshake.value]["handshaking"]:
             server_out("ERROR", f"Unexpected packet ID during handshake: {packet_id} (Client: {addr})")
             return
 
@@ -39,7 +55,7 @@ def handle_client(conn, addr):
         elif next_state == State.login.value:
             packet_length = read_varint(conn)
             packet_id = read_varint(conn)
-            if packet_id != 0x00:
+            if packet_id != packetmap_client[State.login.value]["disconnect"]:
                 server_out("ERROR", f"Unexpected packet ID during login (Client: {addr})")
                 return
 
@@ -49,18 +65,17 @@ def handle_client(conn, addr):
             player_uuid = str(uuid.uuid4())
             uuid_data = write_varint(len(player_uuid)) + player_uuid.encode('utf-8')
             username_data = write_varint(len(username)) + username.encode('utf-8')
-            send_packet(conn, 0x02, uuid_data + username_data)
+            send_packet(conn, packetmap_client[State.login.value]["login_success"], uuid_data + username_data)
             server_out("INFO", f"Login success sent for player '{username}' (Client: {addr})")
 
-            server_out("INFO", f"Forwarding to play state... (Client: {addr})")
-
-            entity_id = 1
-            gamemode = Gamemode.survival.value
+            entity_id = 1 # fix - uhm this is supposed to be random
+            gamemode = Gamemode.creative.value # todo - change to survival later, creative for testing
             dimension = Dimension.overworld.value
-            difficulty = Difficulty.easy.value
+            difficulty = Difficulty.normal.value
             max_players = MAX_PLAYERS
             level_type = LevelType.default.value
             reduced_debug_info = False
+            # optimize - when creating multiple worlds these values may not match the values of other worlds and cause problems, therefore change this later
 
             join_game_data = (
                 struct.pack(">iBbbB", entity_id, gamemode, dimension, difficulty, max_players) +
@@ -70,8 +85,25 @@ def handle_client(conn, addr):
             send_packet(conn, 0x01, join_game_data)
             server_out("INFO", f"Join game packet sent (Client: {addr})")
 
+            player_x, player_y, player_z = SPAWN_X, SPAWN_Y, SPAWN_Z
+            spawn_position = encode_position(player_x, player_y, player_z)
+            send_packet(conn, 0x05, spawn_position)
+            server_out("INFO", f"Sent spawn position: ({player_x}, {player_y}, {player_z})")
+
+            for chunk_x in range(-1, 2):
+                for chunk_z in range(-1, 2):
+                    chunk_manager = world.get_chunk_at(chunk_x * 16, chunk_z * 16)
+                    chunk_manager.send_chunk_data(conn)
+
+            # sending this packet closes the downloading terrain screen
+            send_packet(conn, player_pos_and_look.id, player_pos_and_look.packet)
+
+            send_packet(conn, held_item_change.id, held_item_change.packet) # testing
+            send_packet(conn, update_health.id, update_health.packet) # testing
+            send_packet(conn, entity_effect.id, entity_effect.packet) # testing
+
             while True:
-                conn.sendall(write_varint(0x00))
+                conn.sendall(write_varint(0x00)) # keep alive
                 data = conn.recv(1024)
                 if not data:
                     server_out("INFO", f"Client disconnected (Client: {addr})")
@@ -82,3 +114,4 @@ def handle_client(conn, addr):
     finally:
         conn.close()
         server_out("INFO", f"Client disconnected (Client: {addr})")
+

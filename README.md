@@ -1,6 +1,6 @@
 # 🌊 WaveMC (Protocol 47, Minecraft 1.8.x)
 
-**WaveMC** is a multi-threaded, optimized, and highly customizable Minecraft server software written entirely in Python, specifically targeting **Minecraft version 1.8.x** (protocol 47). WaveMC aims to deliver a modern, efficient, and bug-free alternative to traditional server software like Spigot and Paper, while supporting a robust plugin ecosystem.
+**WaveMC** is a wip, multi-threaded, optimized, and highly customizable Minecraft server software written entirely in Python, specifically targeting **Minecraft version 1.8.x** (protocol 47). WaveMC aims to deliver a modern, efficient, and bug-free alternative to traditional server software like Spigot and Paper, while supporting a robust plugin ecosystem.
 
 ## 🌟 Key Features
 - **Multi-threaded Architecture**: Leverages parallel processing to boost performance, minimize lag, and efficiently handle large player counts.
@@ -26,10 +26,10 @@
    python main.py
    ```
 
-4. **Configure server settings** by editing `config.yml`.
+4. **Configure server settings** by editing `src/data/server_options.py`.
 
 ## 🔧 Configuration
-Customize the `config.yml` file to set up your server:
+Customize the `src/data/server_options.py` file to set up your server:
 - Server port
 - Maximum player count
 - Whitelist settings
