@@ -16,7 +16,7 @@ def read_varint(sock):
 
 def read_string(sock):
     length = read_varint(sock)
-    if length > 32767:              
+    if length > 32767:
         raise ValueError("String too long")
     data = sock.recv(length)
     if len(data) != length:
