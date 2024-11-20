@@ -34,16 +34,13 @@ def send_handshake(conn, host, port, PVN):
     )
     send_packet(conn, 0x00, handshake_packet)
 
-# ik this function is bullshit, could just make a hashmap for the colors and types to avoid the if statements but i seriously dont give a fuck atm
+CONSOLE_COLORS = {
+    "ERROR": '\033[91m',
+    "WARNING": '\033[93m',
+    "DEBUG": '\033[96m',
+    "INFO": '\033[92m',
+}
+
 def server_out(type, msg):
     current_time = datetime.now().strftime("%H:%M:%S")
-    if type == "ERROR":
-        print('\033[91m' + current_time + f" [{type}] " + msg)
-    elif type == "WARNING":
-        print('\033[93m' + current_time + f" [{type}] " + msg)
-    elif type == "DEBUG":
-        print('\033[96m' + current_time + f" [{type}] " + msg)
-    elif type == "INFO":
-        print('\033[92m' + current_time + f" [{type}] " + msg)
-    else:
-        print(current_time + f" [{type}] " + msg)
+    print(CONSOLE_COLORS[type] + current_time + f" [{type}] " + msg)

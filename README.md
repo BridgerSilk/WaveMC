@@ -7,6 +7,7 @@
 - **Optimized for Minecraft 1.8**: Fine-tuned for compatibility and performance on Minecraft 1.8.x, ensuring a smooth gameplay experience.
 - **Plugin Ecosystem**: A powerful Python-based API for creating custom plugins, allowing for easy server customization.
 - **Stability & Bug Fixes**: Resolves common bugs found in popular server software, resulting in enhanced stability and reliability.
+- **Custom World Generation Algorithm**: This world generation algorithm is faster and simpler than the original minecraft world generation algorithm, therefore server startup is a lot faster compared to vanilla.
 
 ## 📦 Installation
 

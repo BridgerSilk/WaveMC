@@ -25,7 +25,7 @@ packetmap_client = {
         "held_item_change": 0x09,
         "entity_effect": 0x1D, # fix - entity effect packet doesnt work apparently
     },
-}
+}               
 
 packetmap_server = {
     State.handshake.value: {
