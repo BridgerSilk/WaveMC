@@ -19,8 +19,10 @@ packetmap_client = {
         "spawn_pos": 0x05,
         "update_health": 0x06,
         "player_pos_and_look": 0x08,
+        "open_sign_editor": 0x36,
         "disconnect": 0x40,
         "set_slot": 0x2F,
+        "close_window": 0x2E,
         # todo - 0x09 and 0x1D are easy to implement
         "held_item_change": 0x09,
         "entity_effect": 0x1D, # fix - entity effect packet doesnt work apparently
